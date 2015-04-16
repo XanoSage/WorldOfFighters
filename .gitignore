@@ -21,8 +21,8 @@ ExportedObj/
 *.user
 *.unityproj
 *.booproj
-Assets/UnityVS/
-Assets/UnityVS.meta
+WorldOfFighters/Assets/UnityVS/
+WorldOfFighters/Assets/UnityVS.meta
 *.sln.DotSettings
  
 # ============ #
