@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.GameLogic.Weapons;
+using UnityEngine;
 
 namespace Assets.Scripts.GameLogic.Plane
 {
@@ -6,7 +7,8 @@ namespace Assets.Scripts.GameLogic.Plane
 	{
 		PlayerPlane, // green-orange
 		EnemyPlaneGreen,
-		EnemyPlaneWhite
+		EnemyPlaneWhite, 
+		EnemyPlaneWhiteGray
 	}
 
 	public class PlaneModel
@@ -33,6 +35,7 @@ namespace Assets.Scripts.GameLogic.Plane
 		private int _healthPoint;
 
 		private float _speed;
+
 		public float Speed
 		{
 			get { return _speed; }
@@ -59,6 +62,13 @@ namespace Assets.Scripts.GameLogic.Plane
 			get { return _id; }
 		}
 
+		private OwnerInfo _planeOwner;
+
+		public OwnerInfo Owner
+		{
+			get { return _planeOwner; }
+		}
+
 		#endregion
 
 		#region Constructor
@@ -72,9 +82,11 @@ namespace Assets.Scripts.GameLogic.Plane
 			_planeType = PlaneType.PlayerPlane;
 			_acceleration = 0f;
 			_accelerationDown = 0f;
+			_planeOwner = OwnerInfo.Player;
 		}
 
-		public PlaneModel(PlaneType type, int id, int lives, int healtPoint, float speed, float acceleration, float accelereationDown)
+		public PlaneModel(PlaneType type, int id, int lives, int healtPoint, float speed, float acceleration,
+						  float accelereationDown, OwnerInfo owner)
 		{
 			_planeType = type;
 			_id = id;
@@ -83,6 +95,7 @@ namespace Assets.Scripts.GameLogic.Plane
 			_speed = speed;
 			_acceleration = acceleration;
 			_accelerationDown = accelereationDown;
+			_planeOwner = owner;
 		}
 
 		public static PlaneModel Create()
@@ -90,9 +103,10 @@ namespace Assets.Scripts.GameLogic.Plane
 			return new PlaneModel();
 		}
 
-		public static PlaneModel Create(PlaneType type, int id, int lives, int healtPoint, float speed, float acceleration, float accelereationDown)
+		public static PlaneModel Create(PlaneType type, int id, int lives, int healtPoint, float speed, float acceleration,
+										float accelereationDown, OwnerInfo owner)
 		{
-			return new PlaneModel(type, id, lives, healtPoint, speed, acceleration, accelereationDown);
+			return new PlaneModel(type, id, lives, healtPoint, speed, acceleration, accelereationDown, owner);
 		}
 
 		#endregion

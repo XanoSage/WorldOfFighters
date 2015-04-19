@@ -55,6 +55,13 @@ public class MainMenuController : MonoBehaviour, IShowable
 	{
 		Debug.Log("MainMenuController.OnPlayButtonClick - OK");
 		Hide();
+
+		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
+
+		if (gameMenuController != null)
+		{
+			gameMenuController.Show();
+		}
 	}
 
 	#endregion

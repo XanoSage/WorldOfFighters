@@ -1,8 +1,9 @@
 ﻿using Assets.Scripts.GameLogic.Plane;
+using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 using System.Collections;
 
-public class PlaneControlling : MonoBehaviour
+public class PlaneControlling : PoolItem
 {
 	#region Constants
 
@@ -14,6 +15,14 @@ public class PlaneControlling : MonoBehaviour
 
 	[SerializeField]
 	private Transform _planeTransform;
+
+	[SerializeField] private PlaneType _planeType;
+	[SerializeField] private int _lives;
+	[SerializeField] private int _helathPoint;
+	[SerializeField] private float _speed;
+	[SerializeField] private float _accelerationPlane;
+	[SerializeField] private float _accelerationDown;
+	[SerializeField] private OwnerInfo _owner;
 
 	private PlaneModel _planeModel;
 
@@ -36,7 +45,7 @@ public class PlaneControlling : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		_planeModel = PlaneModel.Create(PlaneType.PlayerPlane, 0, 1, 1, 300f, 300f, -250f);
+		_planeModel = PlaneModel.Create(_planeType, 0, _lives, _helathPoint, _speed, _accelerationPlane, _accelerationDown, _owner);
 		_rigidbody = GetComponent<Rigidbody2D>();
 
 		_direction = Vector2.zero;
@@ -155,6 +164,27 @@ public class PlaneControlling : MonoBehaviour
 	}
 
 	#endregion
+
+	#endregion
+
+	#region PoolItem implementation
+
+	public override bool EqualsTo(PoolItem item)
+	{
+		throw new System.NotImplementedException();
+	}
+
+	public override void Activate()
+	{
+		base.Activate();
+		gameObject.SetActive(true);
+	}
+
+	public override void Deactivate()
+	{
+		base.Deactivate();
+		gameObject.SetActive(false);
+	}
 
 	#endregion
 }
