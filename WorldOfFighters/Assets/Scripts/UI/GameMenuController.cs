@@ -60,7 +60,16 @@ public class GameMenuController : MonoBehaviour, IShowable
 		PauseMenuController pauseMenuController = FindObjectOfType<PauseMenuController>();
 		if (pauseMenuController != null && !pauseMenuController.Visible)
 		{
-			pauseMenuController.Show();
+			if (!pauseMenuController.Visible)
+			{
+				GameController.Instance.PausedGame();
+				pauseMenuController.Show();
+			}
+			else
+			{
+				GameController.Instance.UnPausedGame();
+				pauseMenuController.Hide();
+			}
 		}
 	}
 

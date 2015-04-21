@@ -55,13 +55,16 @@ public class PauseMenuController : MonoBehaviour, IShowable
 	private void OnResumeButtonClick()
 	{
 		Debug.Log("PauseMenuController.OnResumeButtonClick - OK");
-		Hide();		
+		Hide();
+		GameController.Instance.UnPausedGame();
 	}
 
 	private void OnMainMenuButtonClick()
 	{
 		Debug.Log("PauseMenuController.OnMainMenuClick - OK");
 		Hide();
+
+		GameController.Instance.ToMainMenu();
 
 		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
 		if (gameMenuController != null)

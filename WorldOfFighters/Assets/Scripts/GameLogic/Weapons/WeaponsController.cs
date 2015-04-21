@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.GameLogic.Helper;
+using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 using System.Collections;
-
+[RequireComponent(typeof (WeaponsInformer))]
 public class WeaponsController : MonoBehaviour
 {
 	#region Variables
 
 	private WeaponsInformer _weaponsInformer;
+	private PlaneControlling _plane;
 
 	#endregion
 
@@ -24,13 +26,21 @@ public class WeaponsController : MonoBehaviour
 			throw new MissingComponentException("WeaponsController");
 		}
 
+		_plane = GetComponent<PlaneControlling>();
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
+			return;
+
+
 		if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1"))
 		{
-			Fire();
+			if (_plane != null && _plane.Owner == OwnerInfo.Player)
+				Fire();
 		}
 	}
 
@@ -40,6 +50,9 @@ public class WeaponsController : MonoBehaviour
 
 	private void Fire()
 	{
+		if (_weaponsInformer ==null)
+			return;
+
 		_weaponsInformer.Fire();
 	}
 

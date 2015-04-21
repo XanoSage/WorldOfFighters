@@ -56,6 +56,8 @@ public class MainMenuController : MonoBehaviour, IShowable
 		Debug.Log("MainMenuController.OnPlayButtonClick - OK");
 		Hide();
 
+		GameController.Instance.StartGame();
+
 		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
 
 		if (gameMenuController != null)

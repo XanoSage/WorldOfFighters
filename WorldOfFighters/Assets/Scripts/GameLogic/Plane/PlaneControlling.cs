@@ -16,13 +16,7 @@ public class PlaneControlling : PoolItem
 	[SerializeField]
 	private Transform _planeTransform;
 
-	[SerializeField] private PlaneType _planeType;
-	[SerializeField] private int _lives;
-	[SerializeField] private int _helathPoint;
-	[SerializeField] private float _speed;
-	[SerializeField] private float _accelerationPlane;
-	[SerializeField] private float _accelerationDown;
-	[SerializeField] private OwnerInfo _owner;
+	[SerializeField] private PlaneSimple _planeSimple;
 
 	private PlaneModel _planeModel;
 
@@ -38,6 +32,17 @@ public class PlaneControlling : PoolItem
 	private bool _isPowerOn = false;
 	private bool _isMoving = false;
 
+	[HideInInspector] 
+	public OwnerInfo Owner
+	{
+		get { return _planeModel != null ? _planeModel.Owner : OwnerInfo.AI; }
+	}
+
+
+	public PlaneModel Plane
+	{
+		get { return _planeModel; }
+	}
 	#endregion
 
 	#region MonoBehaviours Actions
@@ -45,7 +50,7 @@ public class PlaneControlling : PoolItem
 	// Use this for initialization
 	void Start ()
 	{
-		_planeModel = PlaneModel.Create(_planeType, 0, _lives, _helathPoint, _speed, _accelerationPlane, _accelerationDown, _owner);
+		_planeModel = PlaneModel.Create(_planeSimple);
 		_rigidbody = GetComponent<Rigidbody2D>();
 
 		_direction = Vector2.zero;
@@ -59,14 +64,22 @@ public class PlaneControlling : PoolItem
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
+
+	}
+
+	void FixedUpdate()
+	{
+		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
+			return;
+
 		UpdateDirections();
 
 		UpdateMovement();
 
 		UpdateRigidBodyMovement();
-		UpdateAcceleration();
-
+		UpdateAcceleration();	
 	}
 
 	#endregion
@@ -80,6 +93,9 @@ public class PlaneControlling : PoolItem
 		if (_planeModel == null)
 			return;
 
+		if (_planeModel.Owner == OwnerInfo.AI)
+			return;
+
 		Vector2 direction = Vector2.zero;
 
 		_isPowerOn = false;
@@ -89,22 +105,26 @@ public class PlaneControlling : PoolItem
 		{
 			direction +=new Vector2(-1, 0);
 			_isMoving = true;
+			_isPowerOn = true;
 		}
 		else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
 		{
 			direction += Vector2.right;
 			_isMoving = true;
+			_isPowerOn = true;
 		}
 
 		if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
 		{
 			direction += Vector2.up;
 			_isMoving = true;
+			_isPowerOn = true;
 		}
 		else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
 		{
 			direction += new Vector2(0, -1);
 			_isMoving = true;
+			_isPowerOn = true;
 		}
 
 		if (Input.GetKey(KeyCode.G))
@@ -115,7 +135,7 @@ public class PlaneControlling : PoolItem
 		if (direction != Vector2.zero)
 		{
 			//Debug.Log("Directions :" + direction);
-			_isPowerOn = true;
+			
 
 			//if (!_isMoving)
 				_direction = direction;
@@ -161,6 +181,8 @@ public class PlaneControlling : PoolItem
 		{
 			_acceleration = _currentVelocity >= _planeModel.Speed ? 0f : _planeModel.Acceleration;
 		}
+
+		//Debug.Log(string.Format("acceleration: {0}, velocity: {1}, isPowerOn: {2}", _acceleration, _currentVelocity, _isPowerOn));
 	}
 
 	#endregion

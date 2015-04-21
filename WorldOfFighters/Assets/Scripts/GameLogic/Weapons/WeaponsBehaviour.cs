@@ -62,6 +62,9 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 
 	void FixedUpdate()
 	{
+		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
+			return;
+
 		UpdatePosition();
 		UpdateCounter();
 	}
