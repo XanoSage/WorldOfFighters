@@ -252,6 +252,10 @@ namespace Assets.Scripts.GameLogic.Plane
 				{
 					OnPlaneDeath(this);
 				}
+				if (_planeDeathListener != null)
+				{
+					_planeDeathListener.OnPlaneDeath(this);
+				}
 			}
 		}
 

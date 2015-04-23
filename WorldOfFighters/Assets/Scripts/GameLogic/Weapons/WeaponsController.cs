@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.GameLogic.Helper;
+using Assets.Scripts.GameLogic.Plane;
 using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 using System.Collections;
@@ -39,7 +40,7 @@ public class WeaponsController : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1"))
 		{
-			if (_plane != null && _plane.Owner == OwnerInfo.Player)
+			if (_plane != null && _plane.Owner == OwnerInfo.Player && _plane.Plane.State != PlaneState.Death)
 				Fire();
 		}
 	}

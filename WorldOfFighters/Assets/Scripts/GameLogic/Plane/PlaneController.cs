@@ -17,7 +17,7 @@ public class PlaneController : MonoBehaviour
 	private float _invulnerabilityTimer = 0;
 	private float _deathStateTimer = 0;
 
-	private float _visibleTime = 0.5f;
+	private float _visibleTime = 0.25f;
 
 	private float _visibleTimer;
 
@@ -51,12 +51,22 @@ public class PlaneController : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
+		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
+			return;
 
+		UpdatePlaneState();
 	}
 
 	void OnCollisionEnter2D(Collision2D coll)
 	{
 		Debug.Log("WeaponsBehaviour.OnCollisionEnter2D - collision name: " + coll.transform.name);
+
+		if (_planeModel.State == PlaneState.Death)
+			return;
+
+		if (_planeModel.Owner ==  OwnerInfo.Player && _planeModel.State == PlaneState.Invulnerability)
+			return;
+
 		WeaponsBehaviour weaponsBehaviour = coll.transform.GetComponent<WeaponsBehaviour>();
 
 		if (weaponsBehaviour != null)
@@ -65,7 +75,26 @@ public class PlaneController : MonoBehaviour
 			{
 				_planeModel.TakeDamage(weaponsBehaviour.Weapon.Damage);
 
+				weaponsBehaviour.BulletDestroy();
+
 			}
+		}
+
+		PlaneControlling plane = coll.transform.GetComponent<PlaneControlling>();
+		if (plane != null)
+		{
+			if (_planeModel.Owner != plane.Plane.Owner && _planeModel.Owner == OwnerInfo.Player)
+			{
+				_planeModel.TakeDamage(1);
+			}
+		}
+	}
+
+	void OnEnable()
+	{
+		if (!IsColliderEnabled())
+		{
+			ColliderActivate(true);
 		}
 	}
 	#endregion
@@ -90,6 +119,7 @@ public class PlaneController : MonoBehaviour
 					_invulnerabilityTimer = 0;
 					SpriteVisible(true);
 					_planeModel.SetPlaneState(PlaneState.Normal);
+					ColliderActivate(true);
 				}
 				break;
 			case PlaneState.Death:
@@ -105,6 +135,7 @@ public class PlaneController : MonoBehaviour
 						_planeModel.SetPlaneState(PlaneState.Invulnerability);
 					else
 					{
+						ColliderActivate(true);
 						_planeModel.SetPlaneState(PlaneState.Normal);
 					}
 					OnAfterDeath();
@@ -137,11 +168,37 @@ public class PlaneController : MonoBehaviour
 	{
 		//_planeControlling.Deactivate();
 		//transform.position = GameController.Instance.PlayerStartPosition.position;
+
+		ColliderActivate(false);
+
+		_planeControlling.ResetPlaneData();
+
+		if (_planeModel.Owner == OwnerInfo.AI)
+		{
+			_planeControlling.PlaneDestroy();
+		}
 	}
 
 	private void OnAfterDeath()
 	{
-		transform.position = GameController.Instance.PlayerStartPosition.position;
+		if (_planeModel.Owner == OwnerInfo.Player)
+			transform.position = GameController.Instance.PlayerStartPosition.position;
+	}
+
+	private void ColliderActivate(bool active)
+	{
+		Collider2D collider2D = GetComponent<Collider2D>();
+
+		if (collider2D != null)
+		{
+			collider2D.enabled = active;
+		}
+	}
+
+	private bool IsColliderEnabled()
+	{
+		Collider2D collider2D = GetComponent<Collider2D>();
+		return collider2D != null && collider2D.enabled;
 	}
 	#endregion
 }

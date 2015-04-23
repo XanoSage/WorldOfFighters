@@ -9,7 +9,7 @@ public class PauseMenuModel : MonoBehaviour
 
 	public Transform PauseMenuPanel;
 
-	public Button ResumeButton;
+	public Button ContinueButton;
 
 	public Button MainMenuButton;
 

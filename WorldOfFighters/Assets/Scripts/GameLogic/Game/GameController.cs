@@ -65,6 +65,7 @@ public class GameController : MonoBehaviour
 		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("PlayerBullets"), LayerMask.NameToLayer("PlayerBullets"));
 		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("EnemyBullets"), LayerMask.NameToLayer("EnemyBullets"));
 		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("PlayerBullets"), LayerMask.NameToLayer("EnemyBullets"));
+		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("EnemyFighter"), LayerMask.NameToLayer("EnemyFighter"));
 	}
 
 	// Use this for initialization
@@ -89,13 +90,13 @@ public class GameController : MonoBehaviour
 		InitPlayerPlane();
 		UpdateHighScore();
 
-		PlaneControlling plane =  CreatePlaneByType(PlaneType.Ki30Nagoya);
+		//PlaneControlling plane =  CreatePlaneByType(PlaneType.Ki30Nagoya);
 
-		if (plane != null)
-		{
-			AddPlane(plane);
-			plane.transform.position = Vector3.zero;
-		}
+		//if (plane != null)
+		//{
+		//	AddPlane(plane);
+		//	plane.transform.position = Vector3.zero;
+		//}
 	}
 
 	public void PausedGame()
@@ -108,27 +109,57 @@ public class GameController : MonoBehaviour
 		_model.State = GameModel.GameState.Playing;
 	}
 
-	public void GameOver()
+	public void GameOver(bool showThanksText = false)
 	{
 		_model.State = GameModel.GameState.GameOver;
 		SaveHighScore();
+		GameOverMenuController gameOverMenuController = FindObjectOfType<GameOverMenuController>();
+		if (gameOverMenuController != null)
+		{
+			gameOverMenuController.Init(_model.LevelControler.Score);
+			gameOverMenuController.Show();
+
+			if (showThanksText)
+			{
+				gameOverMenuController.ShowThanksText();
+			}
+			else
+			{
+				gameOverMenuController.HideThanksText();
+			}
+		}
 	}
 
 	public void ToMainMenu()
 	{
 		_model.State = GameModel.GameState.BeforePlaying;
 		OnMainMenu();
+
+		AiGenerator aiGenerator = FindObjectOfType<AiGenerator>();
+		if (aiGenerator != null)
+		{
+			aiGenerator.Reset();
+		}
+
+		WorldMovement[] worldMovements = FindObjectsOfType<WorldMovement>();
+		for (int i = 0; i < worldMovements.Length; i++)
+		{
+			worldMovements[i].Reset();
+		}
 	}
 
 	public void GameEnd()
 	{
 		_model.State = GameModel.GameState.GameEnd;
+		GameOver(true);
 		SaveHighScore();
 	}
 	
 	private void InitPlayerPlane()
 	{
 		PlaneControlling plane = ResourceController.GetPlaneFromPool(PlaneControlling.PlayerPlanePrefabsPath, FightersParent);
+
+		plane.Plane.Reset(true);
 
 		plane.transform.position = PlayerStartPosition.position;
 
@@ -158,7 +189,8 @@ public class GameController : MonoBehaviour
 
 	private void PlayerGameOver(PlaneModel plane)
 	{
-
+		Debug.Log("GameController.PlayerGameOver - OK , current score:" + _model.LevelControler.Score);
+		GameOver();
 	}
 
 	private void OnMainMenu()
@@ -200,7 +232,23 @@ public class GameController : MonoBehaviour
 	{
 		PlayerPrefs.SetInt(HighscorePrefs, _highScore);
 	}
+
+	public void UpdatePlayerLives(PlaneModel plane)
+	{
+		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
+
+		if (gameMenuController != null)
+		{
+			gameMenuController.InitPlayerData(plane);
+		}
+	}
 	
+	public IPlaneDeathListener GetPlaneDeathLestener()
+	{
+		return _model.LevelControler;
+	}
+
+
 	#region Weapons Behaviour
 
 	public void AddBullet(WeaponsBehaviour bullet)

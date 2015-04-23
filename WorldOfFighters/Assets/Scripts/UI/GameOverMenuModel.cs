@@ -15,5 +15,7 @@ public class GameOverMenuModel : MonoBehaviour
 
 	public Button MainMenuButton;
 
+	public Text ThanksText;
+
 	#endregion
 }

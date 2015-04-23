@@ -24,7 +24,7 @@ public class GameOverMenuController : MonoBehaviour, IShowable
 		}
 
 		SubscribeEvents();
-
+		HideThanksText();
 		Hide();
 	}
 	
@@ -57,16 +57,43 @@ public class GameOverMenuController : MonoBehaviour, IShowable
 	private void OnPlayAgainButtonClick()
 	{
 		Debug.Log("GameOverMenuController.OnPlayAgainButtonClick - OK");
+		Hide();
+		GameController.Instance.ToMainMenu();
+		GameController.Instance.StartGame();
 	}
 
 	private void OnMainMenuButtonClick()
 	{
 		Debug.Log("GameOverMenuController.OnMainMenuButtonClick - OK");
+		Hide();
+		GameController.Instance.ToMainMenu();
+
+		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
+		if (gameMenuController != null)
+		{
+			gameMenuController.Hide();
+		}
+
+		MainMenuController mainMenuController = FindObjectOfType<MainMenuController>();
+		if (mainMenuController != null)
+		{
+			mainMenuController.Show();
+		}
 	}
 
 	public void Init(int score)
 	{
 		_model.ScoreText.text = score.ToString();
+	}
+
+	public void ShowThanksText()
+	{
+		_model.ScoreText.gameObject.SetActive(true);
+	}
+
+	public void HideThanksText()
+	{
+		_model.ScoreText.gameObject.SetActive(false);
 	}
 
 	#endregion
@@ -80,6 +107,7 @@ public class GameOverMenuController : MonoBehaviour, IShowable
 	public void Hide()
 	{
 		_model.GameOverPanel.gameObject.SetActive(false);
+		HideThanksText();
 		Visible = false;
 	}
 

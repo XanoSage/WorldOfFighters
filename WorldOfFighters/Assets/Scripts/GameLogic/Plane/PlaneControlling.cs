@@ -90,6 +90,9 @@ public class PlaneControlling : PoolItem
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
 
+		if (Plane.State == PlaneState.Death)
+			return;
+
 		UpdateDirections();
 
 		UpdateMovement();
@@ -209,6 +212,16 @@ public class PlaneControlling : PoolItem
 		_isMoving = false;
 	}
 
+	public void SetIsPowerOn(bool powerOn)
+	{
+		_isPowerOn = powerOn;
+	}
+
+	public void SetDirection(Vector3 direction)
+	{
+		_direction = direction;
+	}
+
 	#endregion
 
 	#endregion
@@ -244,6 +257,9 @@ public class PlaneControlling : PoolItem
 
 	public void PlaneDestroy()
 	{
+		GameController.Instance.RemovePlane(this);
+		_planeModel.Reset(true);
+
 		Pool.Push(this);
 		Deactivate();
 	}

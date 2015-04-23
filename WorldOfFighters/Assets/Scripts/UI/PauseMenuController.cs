@@ -42,17 +42,17 @@ public class PauseMenuController : MonoBehaviour, IShowable
 
 	private void SubscribeEvents()
 	{
-		_model.ResumeButton.onClick.AddListener(OnResumeButtonClick);
+		_model.ContinueButton.onClick.AddListener(OnContinueButtonClick);
 		_model.MainMenuButton.onClick.AddListener(OnMainMenuButtonClick);
 	}
 
 	private void UnSubscribeEvents()
 	{
-		_model.ResumeButton.onClick.RemoveAllListeners();
-		_model.ResumeButton.onClick.RemoveAllListeners();
+		_model.ContinueButton.onClick.RemoveAllListeners();
+		_model.ContinueButton.onClick.RemoveAllListeners();
 	}
 
-	private void OnResumeButtonClick()
+	private void OnContinueButtonClick()
 	{
 		Debug.Log("PauseMenuController.OnResumeButtonClick - OK");
 		Hide();

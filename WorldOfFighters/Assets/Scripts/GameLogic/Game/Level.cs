@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Scripts.GameLogic.Plane;
 using Assets.Scripts.GameLogic.Weapons;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.GameLogic.Game
@@ -18,6 +19,13 @@ namespace Assets.Scripts.GameLogic.Game
 
 	public class Level
 	{
+
+		#region Constants
+
+		private const int ExtraLifeScore = 100;
+
+		#endregion
+
 		#region Variables
 
 		private int _playerScore;
@@ -99,6 +107,13 @@ namespace Assets.Scripts.GameLogic.Game
 		public void AddScore(int score)
 		{
 			_playerScore += score;
+			Debug.Log("Level.AddScore: _playerScore:" + _playerScore);
+			if (_playerScore % ExtraLifeScore == 0)
+			{
+				Debug.Log("Level.AddScore: _playerScore:" + _playerScore);
+				_player.Plane.AddLive();
+				GameController.Instance.UpdatePlayerLives(_player.Plane);
+			}
 
 			//ScoreUpdate event or listener
 		}
@@ -153,6 +168,11 @@ namespace Assets.Scripts.GameLogic.Game
 		public PlaneControlling PlayerPlane
 		{
 			get { return _level.PlayerPlane; }
+		}
+
+		public int Score
+		{
+			get { return _level.PlayerScore; }
 		}
 
 		#endregion
