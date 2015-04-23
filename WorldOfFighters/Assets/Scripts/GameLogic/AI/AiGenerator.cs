@@ -34,18 +34,19 @@ public class AiGenerator : MonoBehaviour
 	private float _durationCounter = 0;
 
 	#endregion
-	
+
 	#region MonoBehaviourActions
-	
+
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_index--;
 		PrepareNextStage();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
@@ -113,7 +114,7 @@ public class AiGenerator : MonoBehaviour
 	private void CreateJoyKikka()
 	{
 		PlaneControlling plane = ResourceController.GetPlaneFromPool(PlaneControlling.JoyKikkaFightersPrefabsPath,
-																	 GameController.Instance.FightersParent);
+		                                                             GameController.Instance.FightersParent);
 		if (plane != null)
 		{
 			plane.Plane.SetPlaneDeathListener(GameController.Instance.GetPlaneDeathLestener());
@@ -124,7 +125,7 @@ public class AiGenerator : MonoBehaviour
 	private void CreateKi57()
 	{
 		PlaneControlling plane = ResourceController.GetPlaneFromPool(PlaneControlling.Ki57FightersPrefabsPath,
-																	 GameController.Instance.FightersParent);
+		                                                             GameController.Instance.FightersParent);
 		if (plane != null)
 		{
 			plane.Plane.SetPlaneDeathListener(GameController.Instance.GetPlaneDeathLestener());
@@ -151,5 +152,6 @@ public class AiGenerator : MonoBehaviour
 		_durationCounter = 0;
 		PrepareNextStage();
 	}
+
 	#endregion
 }

@@ -69,12 +69,14 @@ public class GameController : MonoBehaviour
 	}
 
 	// Use this for initialization
-	void Start () {
-		
+	private void Start()
+	{
+
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 	}
 
@@ -85,18 +87,9 @@ public class GameController : MonoBehaviour
 	public void StartGame()
 	{
 		_model.State = GameModel.GameState.Playing;
-		//Достать самолёт из ресурсов, создать левел, создать левел контроллер сделать инициализацию
-		//ResourceController.LoadResources<PlaneControlling>(ResourceController.PlayerPlanePrefabsPath, 1, FightersParent);
+
 		InitPlayerPlane();
 		UpdateHighScore();
-
-		//PlaneControlling plane =  CreatePlaneByType(PlaneType.Ki30Nagoya);
-
-		//if (plane != null)
-		//{
-		//	AddPlane(plane);
-		//	plane.transform.position = Vector3.zero;
-		//}
 	}
 
 	public void PausedGame()
@@ -154,7 +147,7 @@ public class GameController : MonoBehaviour
 		GameOver(true);
 		SaveHighScore();
 	}
-	
+
 	private void InitPlayerPlane()
 	{
 		PlaneControlling plane = ResourceController.GetPlaneFromPool(PlaneControlling.PlayerPlanePrefabsPath, FightersParent);
@@ -213,7 +206,7 @@ public class GameController : MonoBehaviour
 
 	private void OnScoreChange(int score)
 	{
-		if (score < _highScore)	
+		if (score < _highScore)
 			return;
 		_highScore = score;
 
@@ -242,7 +235,7 @@ public class GameController : MonoBehaviour
 			gameMenuController.InitPlayerData(plane);
 		}
 	}
-	
+
 	public IPlaneDeathListener GetPlaneDeathLestener()
 	{
 		return _model.LevelControler;
@@ -260,7 +253,7 @@ public class GameController : MonoBehaviour
 	{
 		_model.LevelControler.RemoveBullet(bullet);
 	}
-		 
+
 	#endregion
 
 	#region Plane Behaviour
@@ -300,6 +293,7 @@ public class GameController : MonoBehaviour
 	{
 		_model.LevelControler.RemovePlane(plane);
 	}
+
 	#endregion
 
 	#endregion

@@ -39,13 +39,14 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 
 	#region MonoBehaviour Action
 
-	void Awake()
+	private void Awake()
 	{
-		_weaponModel = Weapons.Create(_simple.Type, _simple.Speed, _simple.CooldownTimer, _simple.BlowUpTime, _simple.Damage, _simple.Owner);
+		_weaponModel = Weapons.Create(_simple.Type, _simple.Speed, _simple.CooldownTimer, _simple.BlowUpTime, _simple.Damage,
+		                              _simple.Owner);
 	}
-	
+
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_rigidbody = GetComponent<Rigidbody2D>();
 
@@ -57,13 +58,14 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		_isInit = false;
 
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 	}
 
-	void FixedUpdate()
+	private void FixedUpdate()
 	{
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
@@ -72,19 +74,17 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		UpdateCounter();
 	}
 
-	void OnCollisionEnter2D(Collision2D coll)
+	private void OnCollisionEnter2D(Collision2D coll)
 	{
 		Debug.Log("WeaponsBehaviour.OnCollisionEnter2D - collision name: " + coll.transform.name);
 	}
+
 	#endregion
 
 	#region Actions
 
 	private void TimetoBlowUp()
 	{
-		//Pool.Push(this);
-		//transform.parent = null;
-
 		GameController.Instance.RemoveBullet(this);
 		BulletDestroy();
 	}
@@ -97,7 +97,7 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		if (_weaponModel == null)
 			return;
 
-		_rigidbody.transform.Translate(_direction * _weaponModel.Speed);
+		_rigidbody.transform.Translate(_direction*_weaponModel.Speed);
 	}
 
 	private void UpdateCounter()
@@ -117,7 +117,7 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		}
 	}
 
-	public void Init(Transform parent, Vector3 startPosition,  Quaternion startRotation, Vector3 direction)
+	public void Init(Transform parent, Vector3 startPosition, Quaternion startRotation, Vector3 direction)
 	{
 		transform.parent = parent;
 		transform.position = startPosition;

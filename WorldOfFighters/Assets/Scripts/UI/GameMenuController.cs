@@ -4,21 +4,19 @@ using Assets.Scripts.UI;
 using UnityEngine;
 using System.Collections;
 
-
-
-public class GameMenuController : MonoBehaviour, IShowable, IScoreListener 
+public class GameMenuController : MonoBehaviour, IShowable, IScoreListener
 {
 
 	#region Variables
 
 	private GameMenuModel _model;
-	
+
 	#endregion
 
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_model = GetComponent<GameMenuModel>();
 
@@ -32,13 +30,14 @@ public class GameMenuController : MonoBehaviour, IShowable, IScoreListener
 
 		Hide();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
-	
+	private void Update()
+	{
+
 	}
 
-	void OnDestroy()
+	private void OnDestroy()
 	{
 		UnSubscribeEvents();
 	}

@@ -18,7 +18,8 @@ namespace Assets.Scripts.GameLogic.Game
 
 		#region Load recources
 
-		public static void LoadResources<T>(string loadPathPrefab, int count = DefaultItemCount, Transform parent = null) where T : Component
+		public static void LoadResources<T>(string loadPathPrefab, int count = DefaultItemCount, Transform parent = null)
+			where T : Component
 		{
 			Object[] items = Resources.LoadAll(loadPathPrefab);
 
@@ -46,8 +47,6 @@ namespace Assets.Scripts.GameLogic.Game
 				{
 					itemT.transform.parent = parent;
 				}
-
-				//Pool.Push(itemT as PoolItem);
 
 				Pool.AddMassive(itemT as PoolItem, count);
 			}
@@ -92,7 +91,7 @@ namespace Assets.Scripts.GameLogic.Game
 				itemFromPool = Pool.Pop(itemGo.GetComponent<T>() as PoolItem) as T ??
 				               CreatePoolItem<T>(itemPrefabPath).GetComponent<T>();
 			}
-			 
+
 			return itemFromPool;
 		}
 
@@ -108,7 +107,7 @@ namespace Assets.Scripts.GameLogic.Game
 			if (itemGo != null)
 			{
 				itemFromPool = Pool.Pop(itemGo.GetComponent<WeaponsBehaviour>() as PoolItem) as WeaponsBehaviour ??
-							   CreatePoolItem<WeaponsBehaviour>(itemPrefabPath).GetComponent<WeaponsBehaviour>();
+				               CreatePoolItem<WeaponsBehaviour>(itemPrefabPath).GetComponent<WeaponsBehaviour>();
 			}
 
 			return itemFromPool;
@@ -126,8 +125,8 @@ namespace Assets.Scripts.GameLogic.Game
 			if (itemGo != null)
 			{
 				itemFromPool = Pool.Pop(itemGo.GetComponent<PlaneControlling>() as PoolItem) as PlaneControlling ??
-							   CreatePoolItem<PlaneControlling>(itemPrefabPath, parent).GetComponent<PlaneControlling>();
-				
+				               CreatePoolItem<PlaneControlling>(itemPrefabPath, parent).GetComponent<PlaneControlling>();
+
 				if (parent != null && itemFromPool.transform.parent == null)
 				{
 					itemFromPool.transform.parent = parent;

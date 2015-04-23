@@ -17,7 +17,7 @@ public class AiWeaponController : MonoBehaviour
 	#region MonoBehaviour actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 
 		_weaponsController = GetComponent<WeaponsController>();
@@ -28,9 +28,10 @@ public class AiWeaponController : MonoBehaviour
 
 		_cooldownTimeCounter = 0;
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
 

@@ -20,19 +20,13 @@ namespace Assets.Scripts.GameLogic.Weapons
 	[Serializable]
 	public class WeaponSimple
 	{
-		[SerializeField]
-		public WeaponsType Type;
+		[SerializeField] public WeaponsType Type;
 
-		[SerializeField]
-		public float Speed;
-		[SerializeField]
-		public float BlowUpTime;
-		[SerializeField]
-		public int Damage;
-		[SerializeField]
-		public float CooldownTimer;
-		[SerializeField]
-		public OwnerInfo Owner;
+		[SerializeField] public float Speed;
+		[SerializeField] public float BlowUpTime;
+		[SerializeField] public int Damage;
+		[SerializeField] public float CooldownTimer;
+		[SerializeField] public OwnerInfo Owner;
 	}
 
 	public class Weapons
@@ -75,7 +69,7 @@ namespace Assets.Scripts.GameLogic.Weapons
 		}
 
 		private OwnerInfo _ownerInfo;
-		
+
 		public OwnerInfo Owner
 		{
 			get { return _ownerInfo; }
@@ -111,7 +105,8 @@ namespace Assets.Scripts.GameLogic.Weapons
 			return new Weapons();
 		}
 
-		public static Weapons Create(WeaponsType type, float speed, float cooldownTimer, float timeToBlowUp, int damage, OwnerInfo owner)
+		public static Weapons Create(WeaponsType type, float speed, float cooldownTimer, float timeToBlowUp, int damage,
+		                             OwnerInfo owner)
 		{
 			return new Weapons(type, speed, cooldownTimer, timeToBlowUp, damage, owner);
 		}

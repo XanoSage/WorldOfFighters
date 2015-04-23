@@ -6,6 +6,7 @@ public class CheckScreenBordrer : MonoBehaviour
 {
 
 	#region Variables
+
 	private Vector3 _minBorder;
 	private Vector3 _maxBorder;
 
@@ -14,9 +15,9 @@ public class CheckScreenBordrer : MonoBehaviour
 	#endregion
 
 	#region MonoBehaviours Actions
-	
+
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 
 		_rigidbody = GetComponent<Rigidbody2D>();
@@ -28,11 +29,13 @@ public class CheckScreenBordrer : MonoBehaviour
 
 		InitBoundsOfTheScreen();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		CheckBorders();
 	}
+
 	#endregion
 
 	#region Actions
@@ -41,9 +44,11 @@ public class CheckScreenBordrer : MonoBehaviour
 	{
 		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
 
-		Vector3 scrVectorMin = new Vector3(spriteRenderer.sprite.rect.width / 4.5f, spriteRenderer.sprite.rect.height / 4.5f, Camera.main.transform.position.z);
-		Vector3 scrVectorMax = new Vector3(Screen.width - spriteRenderer.sprite.rect.width / 4.5f,
-										   Screen.height - spriteRenderer.sprite.rect.height / 4.5f, Camera.main.transform.position.z);
+		Vector3 scrVectorMin = new Vector3(spriteRenderer.sprite.rect.width/4.5f, spriteRenderer.sprite.rect.height/4.5f,
+		                                   Camera.main.transform.position.z);
+		Vector3 scrVectorMax = new Vector3(Screen.width - spriteRenderer.sprite.rect.width/4.5f,
+		                                   Screen.height - spriteRenderer.sprite.rect.height/4.5f,
+		                                   Camera.main.transform.position.z);
 
 		_minBorder =
 			Camera.main.ScreenToWorldPoint(scrVectorMin);
@@ -52,7 +57,7 @@ public class CheckScreenBordrer : MonoBehaviour
 			Camera.main.ScreenToWorldPoint(scrVectorMax);
 
 		Debug.Log(string.Format("_minBorder: {0}, _maxBorder: {1}, screen: {2}x{3}, scrMin:{4}, scrMax:{5}", _minBorder,
-								_maxBorder, Screen.width, Screen.height, scrVectorMin, scrVectorMax));
+		                        _maxBorder, Screen.width, Screen.height, scrVectorMin, scrVectorMax));
 	}
 
 	private void CheckBorders()

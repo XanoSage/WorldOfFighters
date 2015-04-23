@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class PauseMenuController : MonoBehaviour, IShowable 
+public class PauseMenuController : MonoBehaviour, IShowable
 {
 
 	#region Variables
@@ -14,7 +14,7 @@ public class PauseMenuController : MonoBehaviour, IShowable
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_model = GetComponent<PauseMenuModel>();
 
@@ -26,16 +26,18 @@ public class PauseMenuController : MonoBehaviour, IShowable
 		SubscribeEvents();
 		Hide();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 	}
-	
-	void OnDestroy()
+
+	private void OnDestroy()
 	{
 		UnSubscribeEvents();
 	}
+
 	#endregion
 
 	#region Actions

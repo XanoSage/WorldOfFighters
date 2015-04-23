@@ -114,8 +114,6 @@ namespace Assets.Scripts.GameLogic.Game
 				_player.Plane.AddLive();
 				GameController.Instance.UpdatePlayerLives(_player.Plane);
 			}
-
-			//ScoreUpdate event or listener
 		}
 
 		public void RemovePlane(PlaneModel plane)
@@ -126,14 +124,14 @@ namespace Assets.Scripts.GameLogic.Game
 		public void OnDestroy()
 		{
 			PlaneControlling plane = _player;
-			//Object.Destroy(plane.gameObject);
+
 			plane.PlaneDestroy();
 			_player = null;
 
 			while (_aiPlayers.Count > 0)
 			{
 				PlaneControlling aiPlane = _aiPlayers[0];
-				//Object.Destroy(aiPlane.gameObject);
+
 				aiPlane.PlaneDestroy();
 				_aiPlayers.Remove(aiPlane);
 			}
@@ -268,7 +266,6 @@ namespace Assets.Scripts.GameLogic.Game
 				{
 					OnPlayerDeathAction();
 				}
-				//planeModel.SubstractionLives();
 			}
 			else
 			{

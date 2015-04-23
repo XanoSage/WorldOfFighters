@@ -12,15 +12,12 @@ public class AiPathHelper : MonoBehaviour
 	[Serializable]
 	public class PathPair
 	{
-		[SerializeField]
-		public int Index;
-		[SerializeField]
-		public List<Transform> AiPath;
+		[SerializeField] public int Index;
+		[SerializeField] public List<Transform> AiPath;
 	}
 
 
-	[SerializeField]
-	private List<PathPair> _pathPairs;
+	[SerializeField] private List<PathPair> _pathPairs;
 
 	#endregion
 
@@ -28,12 +25,14 @@ public class AiPathHelper : MonoBehaviour
 
 
 	// Use this for initialization
-	void Start () {
-	
+	private void Start()
+	{
+
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 	}
 

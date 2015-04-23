@@ -18,8 +18,7 @@ public class PlaneControlling : PoolItem
 
 	#region Variables
 
-	[SerializeField]
-	private Transform _planeTransform;
+	[SerializeField] private Transform _planeTransform;
 
 	[SerializeField] private PlaneSimple _planeSimple;
 
@@ -37,7 +36,7 @@ public class PlaneControlling : PoolItem
 	private bool _isPowerOn = false;
 	private bool _isMoving = false;
 
-	[HideInInspector] 
+	[HideInInspector]
 	public OwnerInfo Owner
 	{
 		get { return _planeModel != null ? _planeModel.Owner : OwnerInfo.AI; }
@@ -59,12 +58,12 @@ public class PlaneControlling : PoolItem
 	#region MonoBehaviours Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
-		
+
 	}
 
-	void Awake()
+	private void Awake()
 	{
 		_planeModel = PlaneModel.Create(_planeSimple);
 		_rigidbody = GetComponent<Rigidbody2D>();
@@ -78,14 +77,14 @@ public class PlaneControlling : PoolItem
 			throw new MissingComponentException("PlaneControlling.Start - can't find RigidBody2d components");
 		}
 	}
-	
+
 	// Update is called once per frame
 	private void Update()
 	{
 
 	}
 
-	void FixedUpdate()
+	private void FixedUpdate()
 	{
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
@@ -98,7 +97,7 @@ public class PlaneControlling : PoolItem
 		UpdateMovement();
 
 		UpdateRigidBodyMovement();
-		UpdateAcceleration();	
+		UpdateAcceleration();
 	}
 
 	#endregion
@@ -122,7 +121,7 @@ public class PlaneControlling : PoolItem
 
 		if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
 		{
-			direction +=new Vector2(-1, 0);
+			direction += new Vector2(-1, 0);
 			_isMoving = true;
 			_isPowerOn = true;
 		}
@@ -153,11 +152,7 @@ public class PlaneControlling : PoolItem
 
 		if (direction != Vector2.zero)
 		{
-			//Debug.Log("Directions :" + direction);
-			
-
-			//if (!_isMoving)
-				_direction = direction;
+			_direction = direction;
 		}
 
 	}
@@ -167,15 +162,13 @@ public class PlaneControlling : PoolItem
 		if (_planeModel == null)
 			return;
 
-		_vectorVelocity =  _direction *
-									 (_currentVelocity * Time.deltaTime + _acceleration * 0.5f * Time.deltaTime * Time.deltaTime);
+		_vectorVelocity = _direction*
+		                  (_currentVelocity*Time.deltaTime + _acceleration*0.5f*Time.deltaTime*Time.deltaTime);
 
-		
-		_currentVelocity += _acceleration * Time.deltaTime;
-		
+
+		_currentVelocity += _acceleration*Time.deltaTime;
+
 		_currentVelocity = Mathf.Clamp(_currentVelocity, MinPlaneSpeed, _planeModel.Speed);
-
-		//Debug.Log(string.Format("velocity: {0}, currentVelocity:{1}, acceleration: {2}, forward: {3}", _vectorVelocity, _currentVelocity, _acceleration));
 	}
 
 	private void UpdateRigidBodyMovement()
@@ -200,8 +193,6 @@ public class PlaneControlling : PoolItem
 		{
 			_acceleration = _currentVelocity >= _planeModel.Speed ? 0f : _planeModel.Acceleration;
 		}
-
-		//Debug.Log(string.Format("acceleration: {0}, velocity: {1}, isPowerOn: {2}", _acceleration, _currentVelocity, _isPowerOn));
 	}
 
 	public void ResetPlaneData()

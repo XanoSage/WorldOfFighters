@@ -2,7 +2,8 @@
 using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 using System.Collections;
-[RequireComponent(typeof(PlaneControlling))]
+
+[RequireComponent(typeof (PlaneControlling))]
 public class PlaneController : MonoBehaviour
 {
 
@@ -28,7 +29,7 @@ public class PlaneController : MonoBehaviour
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_planeControlling = GetComponent<PlaneControlling>();
 
@@ -48,23 +49,24 @@ public class PlaneController : MonoBehaviour
 			throw new MissingComponentException("PlayerController.Start - can't find SpriteRenderer component");
 		}
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
 
 		UpdatePlaneState();
 	}
 
-	void OnCollisionEnter2D(Collision2D coll)
+	private void OnCollisionEnter2D(Collision2D coll)
 	{
 		Debug.Log("WeaponsBehaviour.OnCollisionEnter2D - collision name: " + coll.transform.name);
 
 		if (_planeModel.State == PlaneState.Death)
 			return;
 
-		if (_planeModel.Owner ==  OwnerInfo.Player && _planeModel.State == PlaneState.Invulnerability)
+		if (_planeModel.Owner == OwnerInfo.Player && _planeModel.State == PlaneState.Invulnerability)
 			return;
 
 		WeaponsBehaviour weaponsBehaviour = coll.transform.GetComponent<WeaponsBehaviour>();
@@ -90,13 +92,14 @@ public class PlaneController : MonoBehaviour
 		}
 	}
 
-	void OnEnable()
+	private void OnEnable()
 	{
 		if (!IsColliderEnabled())
 		{
 			ColliderActivate(true);
 		}
 	}
+
 	#endregion
 
 	#region Actions
@@ -161,7 +164,8 @@ public class PlaneController : MonoBehaviour
 	private void SpriteVisible(bool isVisible)
 	{
 		_visible = isVisible;
-		_spriteRenderer.color = new Color(_spriteRenderer.color.r, _spriteRenderer.color.g, _spriteRenderer.color.b, isVisible ? 1 : 0);
+		_spriteRenderer.color = new Color(_spriteRenderer.color.r, _spriteRenderer.color.g, _spriteRenderer.color.b,
+		                                  isVisible ? 1 : 0);
 	}
 
 	private void OnPlaneDeath(PlaneModel plane)
@@ -200,5 +204,6 @@ public class PlaneController : MonoBehaviour
 		Collider2D collider2D = GetComponent<Collider2D>();
 		return collider2D != null && collider2D.enabled;
 	}
+
 	#endregion
 }

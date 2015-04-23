@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameOverMenuController : MonoBehaviour, IShowable 
+public class GameOverMenuController : MonoBehaviour, IShowable
 {
 
 	#region Variables
@@ -14,7 +14,7 @@ public class GameOverMenuController : MonoBehaviour, IShowable
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_model = GetComponent<GameOverMenuModel>();
 
@@ -27,13 +27,14 @@ public class GameOverMenuController : MonoBehaviour, IShowable
 		HideThanksText();
 		Hide();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 	}
 
-	void OnDestroy()
+	private void OnDestroy()
 	{
 		UnSubscribeEvents();
 	}

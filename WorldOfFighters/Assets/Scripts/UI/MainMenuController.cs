@@ -10,11 +10,11 @@ public class MainMenuController : MonoBehaviour, IShowable
 	private MainMenuModel _model;
 
 	#endregion
-	
+
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 
 		_model = GetComponent<MainMenuModel>();
@@ -26,13 +26,14 @@ public class MainMenuController : MonoBehaviour, IShowable
 
 		SubscribeEvents();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 	}
 
-	void OnDestroy()
+	private void OnDestroy()
 	{
 		UnsubscribeEvents();
 	}
@@ -45,7 +46,7 @@ public class MainMenuController : MonoBehaviour, IShowable
 	{
 		_model.PlayButton.onClick.AddListener(OnPlayButtonClick);
 	}
-	
+
 	private void UnsubscribeEvents()
 	{
 		_model.PlayButton.onClick.RemoveAllListeners();

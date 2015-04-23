@@ -7,10 +7,8 @@ public class WorldMovement : MonoBehaviour
 
 	[SerializeField] private float _speed;
 
-	[SerializeField]
-	private float _minBorder;
-	[SerializeField]
-	private float _maxBorder;
+	[SerializeField] private float _minBorder;
+	[SerializeField] private float _maxBorder;
 	private float _spriteWidth;
 	private float _spriteHeight;
 
@@ -23,15 +21,16 @@ public class WorldMovement : MonoBehaviour
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_startPosition = transform.position;
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
-		return;
+			return;
 
 		UpdatePosition();
 	}
@@ -74,5 +73,6 @@ public class WorldMovement : MonoBehaviour
 		transform.position = _startPosition;
 		Innactive(true);
 	}
+
 	#endregion
 }

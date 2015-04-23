@@ -18,8 +18,8 @@ public class WeaponsInformer : MonoBehaviour
 	#endregion
 
 	#region Variables
-	[SerializeField]
-	private BulletsHelper _shellParent;
+
+	[SerializeField] private BulletsHelper _shellParent;
 
 	public enum WeaponsState
 	{
@@ -33,6 +33,7 @@ public class WeaponsInformer : MonoBehaviour
 		public WeaponsBehaviour Weapons;
 		public Transform StartPosition;
 		private WeaponsInformer.WeaponsState _state;
+
 		public WeaponsState State
 		{
 			get { return _state; }
@@ -68,7 +69,10 @@ public class WeaponsInformer : MonoBehaviour
 
 	[SerializeField] private List<WeaponsInfoPair> _weaponsInfoPairs;
 
-	public List<WeaponsInfoPair> WeaponsInfoPairs { get { return _weaponsInfoPairs; } }
+	public List<WeaponsInfoPair> WeaponsInfoPairs
+	{
+		get { return _weaponsInfoPairs; }
+	}
 
 	#endregion
 
@@ -81,17 +85,18 @@ public class WeaponsInformer : MonoBehaviour
 		if (_shellParent == null)
 		{
 			throw new MissingComponentException("WeaponsInformer.Start - can't find BulletsHelper component");
-		}	
+		}
 	}
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
-	
+
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 		if (WeaponsInfoPairs == null)
 			return;
@@ -105,7 +110,7 @@ public class WeaponsInformer : MonoBehaviour
 	#endregion
 
 	#region Actions
-	
+
 	public void Fire()
 	{
 		foreach (WeaponsInfoPair weaponsInfoPair in _weaponsInfoPairs)
@@ -113,18 +118,22 @@ public class WeaponsInformer : MonoBehaviour
 			if (weaponsInfoPair.State == WeaponsState.Reload)
 				continue;
 
-			WeaponsBehaviour weaponsBehaviour = ResourceController.GetBulletFromPool(GetWeaponPrefabPathByType(weaponsInfoPair.Weapons.Type), _shellParent.transform);
+			WeaponsBehaviour weaponsBehaviour =
+				ResourceController.GetBulletFromPool(GetWeaponPrefabPathByType(weaponsInfoPair.Weapons.Type), _shellParent.transform);
 
 			if (weaponsBehaviour != null)
 			{
-				Vector3 direction = weaponsInfoPair.Weapons.Owner == OwnerInfo.Player ? weaponsInfoPair.StartPosition.up : Vector3.up;
+				Vector3 direction = weaponsInfoPair.Weapons.Owner == OwnerInfo.Player
+					                    ? weaponsInfoPair.StartPosition.up
+					                    : Vector3.up;
 
-				weaponsBehaviour.Init(_shellParent.transform, weaponsInfoPair.StartPosition.position, weaponsInfoPair.Weapons.transform.rotation,
-									  direction);
+				weaponsBehaviour.Init(_shellParent.transform, weaponsInfoPair.StartPosition.position,
+				                      weaponsInfoPair.Weapons.transform.rotation,
+				                      direction);
 			}
 
 			weaponsInfoPair.Fire();
-			
+
 		}
 	}
 

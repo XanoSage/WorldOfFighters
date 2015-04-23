@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
-[RequireComponent(typeof(PlaneControlling))]
+
+[RequireComponent(typeof (PlaneControlling))]
 public class AiMoveByPoint : MonoBehaviour
 {
 
@@ -20,11 +21,12 @@ public class AiMoveByPoint : MonoBehaviour
 	private float _distance = 1f;
 
 	private AiPathHelper _aiPathHelper;
+
 	#endregion
 
 	#region MonoBehavoiur Actions
 
-	void Awake()
+	private void Awake()
 	{
 		_planeControlling = GetComponent<PlaneControlling>();
 		_aiPathHelper = FindObjectOfType<AiPathHelper>();
@@ -35,7 +37,7 @@ public class AiMoveByPoint : MonoBehaviour
 	}
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 		_variousPointPosition = _aiPathHelper.GetAiPath();
 
@@ -43,16 +45,17 @@ public class AiMoveByPoint : MonoBehaviour
 
 		Init();
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
 
 		UpdatePosition();
 	}
 
-	void OnEnable()
+	private void OnEnable()
 	{
 		Init();
 	}
@@ -122,7 +125,8 @@ public class AiMoveByPoint : MonoBehaviour
 		PowerOff();
 
 		_variousPointPosition = _aiPathHelper.GetAiPath();
-		transform.position =_variousPointPosition[0].position;
+		transform.position = _variousPointPosition[0].position;
 	}
+
 	#endregion
 }

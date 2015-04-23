@@ -4,6 +4,7 @@ using Assets.Scripts.GameLogic.Plane;
 using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 using System.Collections;
+
 [RequireComponent(typeof (WeaponsInformer))]
 public class WeaponsController : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class WeaponsController : MonoBehaviour
 	#region MonoBehaviour Actions
 
 	// Use this for initialization
-	void Start ()
+	private void Start()
 	{
 
 		_weaponsInformer = GetComponent<WeaponsInformer>();
@@ -30,9 +31,10 @@ public class WeaponsController : MonoBehaviour
 		_plane = GetComponent<PlaneControlling>();
 
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+	{
 
 		if (GameController.Instance != null && GameController.Instance.State != GameModel.GameState.Playing)
 			return;
@@ -51,7 +53,7 @@ public class WeaponsController : MonoBehaviour
 
 	public void Fire()
 	{
-		if (_weaponsInformer ==null)
+		if (_weaponsInformer == null)
 			return;
 
 		_weaponsInformer.Fire();

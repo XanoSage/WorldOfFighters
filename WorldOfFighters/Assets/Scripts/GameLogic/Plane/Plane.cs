@@ -21,27 +21,17 @@ namespace Assets.Scripts.GameLogic.Plane
 	}
 
 	[Serializable]
-	//for JSON using
 	public class PlaneSimple
 	{
-		[SerializeField]
-		public PlaneType Type;
-		[SerializeField]
-		public int Lives;
-		[SerializeField]
-		public int HealthPoint;
-		[SerializeField]
-		public int Id;
-		[SerializeField]
-		public float Speed;
-		[SerializeField]
-		public float AccelerationPlane;
-		[SerializeField]
-		public float AccelerationDown;
-		[SerializeField]
-		public OwnerInfo Owner;
-		[SerializeField]
-		public int BonusPoint;
+		[SerializeField] public PlaneType Type;
+		[SerializeField] public int Lives;
+		[SerializeField] public int HealthPoint;
+		[SerializeField] public int Id;
+		[SerializeField] public float Speed;
+		[SerializeField] public float AccelerationPlane;
+		[SerializeField] public float AccelerationDown;
+		[SerializeField] public OwnerInfo Owner;
+		[SerializeField] public int BonusPoint;
 	}
 
 	public class PlaneModel
@@ -156,7 +146,7 @@ namespace Assets.Scripts.GameLogic.Plane
 		}
 
 		public PlaneModel(PlaneType type, int id, int lives, int healtPoint, float speed, float acceleration,
-						  float accelereationDown, OwnerInfo owner, int bonusPoint)
+		                  float accelereationDown, OwnerInfo owner, int bonusPoint)
 		{
 			_planeType = type;
 			_id = id;
@@ -187,7 +177,7 @@ namespace Assets.Scripts.GameLogic.Plane
 		}
 
 		public static PlaneModel Create(PlaneType type, int id, int lives, int healtPoint, float speed, float acceleration,
-										float accelereationDown, OwnerInfo owner, int bonusPoint)
+		                                float accelereationDown, OwnerInfo owner, int bonusPoint)
 		{
 			return new PlaneModel(type, id, lives, healtPoint, speed, acceleration, accelereationDown, owner, bonusPoint);
 		}
@@ -222,7 +212,7 @@ namespace Assets.Scripts.GameLogic.Plane
 
 		public void SubstractionLives()
 		{
-			_lives --;
+			_lives--;
 
 			if (_lives < 0)
 			{
