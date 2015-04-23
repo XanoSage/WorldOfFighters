@@ -1,8 +1,12 @@
-﻿using Assets.Scripts.UI;
+﻿using Assets.Scripts.GameLogic.Game;
+using Assets.Scripts.GameLogic.Plane;
+using Assets.Scripts.UI;
 using UnityEngine;
 using System.Collections;
 
-public class GameMenuController : MonoBehaviour, IShowable
+
+
+public class GameMenuController : MonoBehaviour, IShowable, IScoreListener 
 {
 
 	#region Variables
@@ -24,7 +28,7 @@ public class GameMenuController : MonoBehaviour, IShowable
 		}
 
 		SubscribeEvents();
-		UpdatePlayerLives(2);
+		//UpdatePlayerLives(2);
 
 		Hide();
 	}
@@ -89,6 +93,21 @@ public class GameMenuController : MonoBehaviour, IShowable
 		}
 	}
 
+	public void OnHighScoreUdate(int highScore)
+	{
+		_model.HighScoreText.text = highScore.ToString();
+	}
+
+	public void InitPlayerData(PlaneModel plane)
+	{
+		UpdatePlayerLives(plane.Lives);
+	}
+
+	public void OnPlayerDeath(PlaneModel plane)
+	{
+		UpdatePlayerLives(plane.Lives);
+	}
+
 	#endregion
 
 	#region IShowable implementations
@@ -106,6 +125,15 @@ public class GameMenuController : MonoBehaviour, IShowable
 	}
 
 	public bool Visible { get; set; }
+
+	#endregion
+
+	#region IScoreListener implementation
+
+	public void OnScoreChange(int score)
+	{
+		_model.ScoreText.text = score.ToString();
+	}
 
 	#endregion
 }

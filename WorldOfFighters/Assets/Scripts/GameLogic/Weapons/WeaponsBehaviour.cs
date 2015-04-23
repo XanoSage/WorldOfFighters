@@ -8,12 +8,7 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 
 	#region Variables
 
-	[SerializeField] private WeaponsType _type;
-
-	[SerializeField] private float _speed;
-	[SerializeField] private float _blowUpTime;
-	[SerializeField] private int _damage;
-	[SerializeField] private float _cooldownTimer;
+	[SerializeField] private WeaponSimple _simple;
 
 	private Weapons _weaponModel;
 
@@ -27,7 +22,17 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 
 	public WeaponsType Type
 	{
-		get { return _type; }
+		get { return _simple.Type; }
+	}
+
+	public OwnerInfo Owner
+	{
+		get { return _simple.Owner; }
+	}
+
+	public Weapons Weapon
+	{
+		get { return _weaponModel; }
 	}
 
 	#endregion
@@ -36,7 +41,7 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 
 	void Awake()
 	{
-		_weaponModel = Weapons.Create(_type, _speed, _cooldownTimer, _blowUpTime, _damage);
+		_weaponModel = Weapons.Create(_simple.Type, _simple.Speed, _simple.CooldownTimer, _simple.BlowUpTime, _simple.Damage, _simple.Owner);
 	}
 	
 	// Use this for initialization
@@ -48,8 +53,6 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		{
 			throw new MissingComponentException("WeaponsBehaviour.Start - can't find RigidBody component");
 		}
-
-		_type = WeaponsType.Missile;
 
 		_isInit = false;
 
@@ -68,6 +71,11 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		UpdatePosition();
 		UpdateCounter();
 	}
+
+	void OnCollisionEnter2D(Collision2D coll)
+	{
+		Debug.Log("WeaponsBehaviour.OnCollisionEnter2D - collision name: " + coll.transform.name);
+	}
 	#endregion
 
 	#region Actions
@@ -75,8 +83,10 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 	private void TimetoBlowUp()
 	{
 		//Pool.Push(this);
-		transform.parent = null;
-		Destroy(gameObject);
+		//transform.parent = null;
+
+		GameController.Instance.RemoveBullet(this);
+		BulletDestroy();
 	}
 
 	private void UpdatePosition()
@@ -117,6 +127,16 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 		_blowUpCounter = 0;
 
 		_isInit = true;
+
+		GameController.Instance.AddBullet(this);
+	}
+
+	public void BulletDestroy()
+	{
+		_isInit = false;
+		_blowUpCounter = 0;
+		Deactivate();
+		Pool.Push(this);
 	}
 
 	#endregion
@@ -156,7 +176,7 @@ public class WeaponsBehaviour : PoolItem, ICooldownTime
 
 	public float CooldownTime
 	{
-		get { return _weaponModel == null ? _cooldownTimer : _weaponModel.CooldownTime; }
+		get { return _weaponModel == null ? _simple.CooldownTimer : _weaponModel.CooldownTime; }
 		set { }
 	}
 

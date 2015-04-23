@@ -48,7 +48,7 @@ public class WeaponsController : MonoBehaviour
 
 	#region Actions
 
-	private void Fire()
+	public void Fire()
 	{
 		if (_weaponsInformer ==null)
 			return;

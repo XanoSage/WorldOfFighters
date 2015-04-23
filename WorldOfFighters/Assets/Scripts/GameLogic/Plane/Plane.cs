@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.GameLogic.Game;
 using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 
@@ -6,10 +7,10 @@ namespace Assets.Scripts.GameLogic.Plane
 {
 	public enum PlaneType
 	{
-		PlayerPlane, // green-orange
-		EnemyPlaneGreen,
-		EnemyPlaneWhite, 
-		EnemyPlaneWhiteGray
+		G4M1Betty, // green-orange, playerPlane
+		Ki30Nagoya, // white, enemy
+		JoyKikka, // black
+		Ki57 // gray
 	}
 
 	public enum PlaneState
@@ -48,6 +49,8 @@ namespace Assets.Scripts.GameLogic.Plane
 		#region Constants
 
 		private const int MaxPlayerLife = 5;
+		public const float InvulnerabilityTime = 3f;
+		public const float DeathTime = 2f;
 
 		#endregion
 
@@ -129,6 +132,8 @@ namespace Assets.Scripts.GameLogic.Plane
 		public event Action<PlaneModel> OnPlaneDeath;
 		public event Action<PlaneModel> OnPlayerGameOver;
 
+		private IPlaneDeathListener _planeDeathListener;
+
 		#endregion
 
 		#region Constructor
@@ -141,7 +146,7 @@ namespace Assets.Scripts.GameLogic.Plane
 			_healthPointDefault = _healthPoint;
 			_speed = 300;
 			_id = 0;
-			_planeType = PlaneType.PlayerPlane;
+			_planeType = PlaneType.G4M1Betty;
 			_acceleration = 0f;
 			_accelerationDown = 0f;
 			_planeOwner = OwnerInfo.Player;
@@ -234,13 +239,14 @@ namespace Assets.Scripts.GameLogic.Plane
 			_planeState = state;
 		}
 
-		public void DealDamage(int damage)
+		public void TakeDamage(int damage)
 		{
 			_healthPoint -= damage;
 
 			if (_healthPoint <= 0)
 			{
 				_healthPoint = 0;
+				SubstractionLives();
 				_planeState = PlaneState.Death;
 				if (OnPlaneDeath != null)
 				{
@@ -265,6 +271,11 @@ namespace Assets.Scripts.GameLogic.Plane
 			{
 				_lives = _livesDefault;
 			}
+		}
+
+		public void SetPlaneDeathListener(IPlaneDeathListener planeDeathListener)
+		{
+			_planeDeathListener = planeDeathListener;
 		}
 
 	}

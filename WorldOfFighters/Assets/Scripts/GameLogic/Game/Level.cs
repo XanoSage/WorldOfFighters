@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using Assets.Scripts.GameLogic.Plane;
 using Assets.Scripts.GameLogic.Weapons;
+using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.GameLogic.Game
 {
 	public interface IPlaneDeathListener
 	{
 		void OnPlaneDeath(PlaneModel planeModel);
+	}
+
+	public interface IScoreListener
+	{
+		void OnScoreChange(int score);
 	}
 
 	public class Level
@@ -23,13 +29,25 @@ namespace Assets.Scripts.GameLogic.Game
 
 		private PlaneControlling _player;
 
+		public PlaneControlling PlayerPlane
+		{
+			get { return _player; }
+		}
+
 		private List<PlaneControlling> _aiPlayers;
 
 		public List<PlaneControlling> AiPlaneList
 		{
 			get { return _aiPlayers; }
 		}
+
+		private List<WeaponsBehaviour> _weaponsBehaviours;
 		
+		public List<WeaponsBehaviour> Bullets
+		{
+			get { return _weaponsBehaviours; }
+		}
+
 		#endregion
 
 		#region Constructor
@@ -39,28 +57,29 @@ namespace Assets.Scripts.GameLogic.Game
 			_aiPlayers = new List<PlaneControlling>();
 			_player = null;
 			_playerScore = 0;
+			_weaponsBehaviours = new List<WeaponsBehaviour>();
 		}
 
 		public Level(PlaneControlling player)
 		{
 			_player = player;
 			_aiPlayers = new List<PlaneControlling>();
+			_weaponsBehaviours = new List<WeaponsBehaviour>();
 			_playerScore = 0;
 		}
 
+		public static Level Create()
+		{
+			return new Level();
+		}
+
+		public static Level Create(PlaneControlling playerPlane)
+		{
+			return new Level(playerPlane);
+		}
 		#endregion
 
 		#region Actions
-
-		public void AddAiPlayer(PlaneControlling aiPlane)
-		{
-			_aiPlayers.Add(aiPlane);
-		}
-
-		public void AddAiPlayers(List<PlaneControlling> aiPlanes)
-		{
-			_aiPlayers.AddRange(aiPlanes);
-		}
 
 		public void RemovePlayers()
 		{
@@ -89,6 +108,29 @@ namespace Assets.Scripts.GameLogic.Game
 			_aiPlayers.RemoveAll(aiPlane=> aiPlane.Plane == plane);
 		}
 
+		public void OnDestroy()
+		{
+			PlaneControlling plane = _player;
+			//Object.Destroy(plane.gameObject);
+			plane.PlaneDestroy();
+			_player = null;
+
+			while (_aiPlayers.Count > 0)
+			{
+				PlaneControlling aiPlane = _aiPlayers[0];
+				//Object.Destroy(aiPlane.gameObject);
+				aiPlane.PlaneDestroy();
+				_aiPlayers.Remove(aiPlane);
+			}
+
+			while (_weaponsBehaviours.Count > 0)
+			{
+				WeaponsBehaviour bullet = _weaponsBehaviours[0];
+				bullet.BulletDestroy();
+				_weaponsBehaviours.Remove(bullet);
+			}
+		}
+
 		#endregion
 
 	}
@@ -104,6 +146,15 @@ namespace Assets.Scripts.GameLogic.Game
 
 		public event Action OnPlayerGameOver;
 
+		public event Action<int> OnScoreChange;
+
+		private IScoreListener _scoreListener;
+
+		public PlaneControlling PlayerPlane
+		{
+			get { return _level.PlayerPlane; }
+		}
+
 		#endregion
 
 		#region Constructor
@@ -113,14 +164,15 @@ namespace Assets.Scripts.GameLogic.Game
 
 		}
 
-		public LevelController(Level level)
+		public LevelController(Level level, IScoreListener scoreListener)
 		{
 			_level = level;
+			_scoreListener = scoreListener;
 		}
 
-		public static LevelController Create(Level level)
+		public static LevelController Create(Level level, IScoreListener scoreListener)
 		{
-			return new LevelController(level);
+			return new LevelController(level, scoreListener);
 		}
 		#endregion
 
@@ -128,20 +180,20 @@ namespace Assets.Scripts.GameLogic.Game
 
 		public void AddAiPlayer(PlaneControlling aiPlayer)
 		{
-			_level.AddAiPlayer(aiPlayer);
+			_level.AiPlaneList.Add(aiPlayer);
 		}
 
 		public void AddAiPlayers(List<PlaneControlling> aiPlayers)
 		{
-			_level.AddAiPlayers(aiPlayers);
+			_level.AiPlaneList.AddRange(aiPlayers);
 		}
 
-		public void RemovePlayers()
+		public void RemovePlanes()
 		{
 			_level.RemovePlayers();
 		}
 
-		public void RemovePlayer(PlaneControlling aiPlayer)
+		public void RemovePlane(PlaneControlling aiPlayer)
 		{
 			_level.RemovePlayer(aiPlayer);
 		}
@@ -152,6 +204,36 @@ namespace Assets.Scripts.GameLogic.Game
 			{
 				OnPlayerGameOver();
 			}
+		}
+
+		public void AddBullet(WeaponsBehaviour bullet)
+		{
+			_level.Bullets.Add(bullet);
+		}
+
+		public void AddBullets(List<WeaponsBehaviour> bullets)
+		{
+			_level.Bullets.AddRange(bullets);
+		}
+
+		public void RemoveBullet(WeaponsBehaviour bullet)
+		{
+			_level.Bullets.Remove(bullet);
+		}
+
+		public void Init()
+		{
+			_scoreListener.OnScoreChange(_level.PlayerScore);
+			if (OnScoreChange != null)
+			{
+				OnScoreChange(_level.PlayerScore);
+			}
+		}
+
+		public void OnDestroy()
+		{
+			_scoreListener = null;
+			_level.OnDestroy();
 		}
 
 		#endregion
@@ -166,11 +248,16 @@ namespace Assets.Scripts.GameLogic.Game
 				{
 					OnPlayerDeathAction();
 				}
-				planeModel.SubstractionLives();
+				//planeModel.SubstractionLives();
 			}
 			else
 			{
 				_level.AddScore(planeModel.BonusPoint);
+				_scoreListener.OnScoreChange(_level.PlayerScore);
+				if (OnScoreChange != null)
+				{
+					OnScoreChange(_level.PlayerScore);
+				}
 			}
 		}
 

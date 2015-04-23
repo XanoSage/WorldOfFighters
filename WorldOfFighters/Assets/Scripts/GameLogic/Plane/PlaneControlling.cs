@@ -9,6 +9,11 @@ public class PlaneControlling : PoolItem
 
 	private const float MinPlaneSpeed = 0;
 
+	public const string PlayerPlanePrefabsPath = "Prefabs/Fighters/PlayerFighters";
+	public const string JoyKikkaFightersPrefabsPath = "Prefabs/Fighters/EnemiesFighters/JoyKikkaFighters";
+	public const string Ki30NagoyaFightersPrefabsPath = "Prefabs/Fighters/EnemiesFighters/Ki30NagoyaFighters";
+	public const string Ki57FightersPrefabsPath = "Prefabs/Fighters/EnemiesFighters/Ki57Fighters";
+
 	#endregion
 
 	#region Variables
@@ -43,12 +48,23 @@ public class PlaneControlling : PoolItem
 	{
 		get { return _planeModel; }
 	}
+
+	public PlaneType Type
+	{
+		get { return _planeModel != null ? _planeModel.Type : _planeSimple != null ? _planeSimple.Type : PlaneType.G4M1Betty; }
+	}
+
 	#endregion
 
 	#region MonoBehaviours Actions
 
 	// Use this for initialization
 	void Start ()
+	{
+		
+	}
+
+	void Awake()
 	{
 		_planeModel = PlaneModel.Create(_planeSimple);
 		_rigidbody = GetComponent<Rigidbody2D>();
@@ -185,6 +201,14 @@ public class PlaneControlling : PoolItem
 		//Debug.Log(string.Format("acceleration: {0}, velocity: {1}, isPowerOn: {2}", _acceleration, _currentVelocity, _isPowerOn));
 	}
 
+	public void ResetPlaneData()
+	{
+		_currentVelocity = 0;
+		_acceleration = 0;
+		_isPowerOn = false;
+		_isMoving = false;
+	}
+
 	#endregion
 
 	#endregion
@@ -193,7 +217,17 @@ public class PlaneControlling : PoolItem
 
 	public override bool EqualsTo(PoolItem item)
 	{
-		throw new System.NotImplementedException();
+		if (!(item is PlaneControlling))
+			return false;
+
+		PlaneControlling plane = item as PlaneControlling;
+
+		if (plane.Type != Type)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	public override void Activate()
@@ -206,6 +240,12 @@ public class PlaneControlling : PoolItem
 	{
 		base.Deactivate();
 		gameObject.SetActive(false);
+	}
+
+	public void PlaneDestroy()
+	{
+		Pool.Push(this);
+		Deactivate();
 	}
 
 	#endregion

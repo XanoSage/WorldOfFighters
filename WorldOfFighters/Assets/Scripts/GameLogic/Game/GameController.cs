@@ -1,8 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using Assets.Scripts.GameLogic.Game;
+using Assets.Scripts.GameLogic.Plane;
+using UnityEngine;
 using System.Collections;
 
 public class GameController : MonoBehaviour
 {
+
+	#region Constants
+
+	private const string HighscorePrefs = "Highscore";
+
+	private int _highScore;
+
+	public event Action<int> OnHighScoreChange;
+
+	#endregion
 
 	#region Variables
 
@@ -14,6 +27,10 @@ public class GameController : MonoBehaviour
 	{
 		get { return _model.State; }
 	}
+
+	public Transform FightersParent;
+
+	public Transform PlayerStartPosition;
 
 	#endregion
 
@@ -31,11 +48,28 @@ public class GameController : MonoBehaviour
 		Instance = this;
 
 		_model.State = GameModel.GameState.BeforePlaying;
+
+		if (PlayerPrefs.HasKey(HighscorePrefs))
+		{
+			_highScore = PlayerPrefs.GetInt(HighscorePrefs);
+		}
+		else
+		{
+			_highScore = 0;
+		}
+
+		UpdateHighScore();
+
+		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("PLayersFighter"), LayerMask.NameToLayer("PlayerBullets"));
+		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("EnemyFighter"), LayerMask.NameToLayer("EnemyBullets"));
+		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("PlayerBullets"), LayerMask.NameToLayer("PlayerBullets"));
+		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("EnemyBullets"), LayerMask.NameToLayer("EnemyBullets"));
+		Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("PlayerBullets"), LayerMask.NameToLayer("EnemyBullets"));
 	}
 
 	// Use this for initialization
 	void Start () {
-	
+		
 	}
 	
 	// Update is called once per frame
@@ -51,6 +85,17 @@ public class GameController : MonoBehaviour
 	{
 		_model.State = GameModel.GameState.Playing;
 		//Достать самолёт из ресурсов, создать левел, создать левел контроллер сделать инициализацию
+		//ResourceController.LoadResources<PlaneControlling>(ResourceController.PlayerPlanePrefabsPath, 1, FightersParent);
+		InitPlayerPlane();
+		UpdateHighScore();
+
+		PlaneControlling plane =  CreatePlaneByType(PlaneType.Ki30Nagoya);
+
+		if (plane != null)
+		{
+			AddPlane(plane);
+			plane.transform.position = Vector3.zero;
+		}
 	}
 
 	public void PausedGame()
@@ -66,17 +111,148 @@ public class GameController : MonoBehaviour
 	public void GameOver()
 	{
 		_model.State = GameModel.GameState.GameOver;
+		SaveHighScore();
 	}
 
 	public void ToMainMenu()
 	{
 		_model.State = GameModel.GameState.BeforePlaying;
+		OnMainMenu();
 	}
 
 	public void GameEnd()
 	{
 		_model.State = GameModel.GameState.GameEnd;
+		SaveHighScore();
 	}
+	
+	private void InitPlayerPlane()
+	{
+		PlaneControlling plane = ResourceController.GetPlaneFromPool(PlaneControlling.PlayerPlanePrefabsPath, FightersParent);
+
+		plane.transform.position = PlayerStartPosition.position;
+
+		Level level = Level.Create(plane);
+
+		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
+
+		if (gameMenuController != null)
+		{
+			_model.LevelControler = LevelController.Create(level, gameMenuController);
+			_model.LevelControler.Init();
+			plane.Plane.OnPlaneDeath += gameMenuController.OnPlayerDeath;
+			gameMenuController.InitPlayerData(plane.Plane);
+
+			plane.Plane.SetPlaneDeathListener(_model.LevelControler);
+
+			OnHighScoreChange += gameMenuController.OnHighScoreUdate;
+		}
+
+		if (_model.LevelControler != null)
+		{
+			_model.LevelControler.OnScoreChange += OnScoreChange;
+		}
+
+		plane.Plane.OnPlayerGameOver += PlayerGameOver;
+	}
+
+	private void PlayerGameOver(PlaneModel plane)
+	{
+
+	}
+
+	private void OnMainMenu()
+	{
+		_model.LevelControler.OnScoreChange -= OnScoreChange;
+		_model.LevelControler.PlayerPlane.Plane.OnPlayerGameOver -= PlayerGameOver;
+
+		_model.LevelControler.PlayerPlane.ResetPlaneData();
+
+		GameMenuController gameMenuController = FindObjectOfType<GameMenuController>();
+
+		if (gameMenuController != null)
+		{
+			_model.LevelControler.PlayerPlane.Plane.OnPlaneDeath -= gameMenuController.OnPlayerDeath;
+		}
+
+		_model.LevelControler.OnDestroy();
+
+	}
+
+	private void OnScoreChange(int score)
+	{
+		if (score < _highScore)	
+			return;
+		_highScore = score;
+
+		UpdateHighScore();
+	}
+
+	private void UpdateHighScore()
+	{
+		if (OnHighScoreChange != null)
+		{
+			OnHighScoreChange(_highScore);
+		}
+	}
+
+	private void SaveHighScore()
+	{
+		PlayerPrefs.SetInt(HighscorePrefs, _highScore);
+	}
+	
+	#region Weapons Behaviour
+
+	public void AddBullet(WeaponsBehaviour bullet)
+	{
+		_model.LevelControler.AddBullet(bullet);
+	}
+
+	public void RemoveBullet(WeaponsBehaviour bullet)
+	{
+		_model.LevelControler.RemoveBullet(bullet);
+	}
+		 
+	#endregion
+
+	#region Plane Behaviour
+
+	public PlaneControlling CreatePlaneByType(PlaneType type)
+	{
+		PlaneControlling plane = default(PlaneControlling);
+
+		switch (type)
+		{
+			case PlaneType.JoyKikka:
+				plane = ResourceController.GetPlaneFromPool(PlaneControlling.JoyKikkaFightersPrefabsPath, FightersParent);
+				break;
+
+			case PlaneType.Ki30Nagoya:
+				plane = ResourceController.GetPlaneFromPool(PlaneControlling.Ki30NagoyaFightersPrefabsPath, FightersParent);
+				break;
+
+			case PlaneType.Ki57:
+				plane = ResourceController.GetPlaneFromPool(PlaneControlling.Ki57FightersPrefabsPath, FightersParent);
+				break;
+		}
+
+		if (plane != null)
+		{
+			plane.Plane.SetPlaneDeathListener(_model.LevelControler);
+		}
+		return plane;
+	}
+
+	public void AddPlane(PlaneControlling plane)
+	{
+		_model.LevelControler.AddAiPlayer(plane);
+	}
+
+	public void RemovePlane(PlaneControlling plane)
+	{
+		_model.LevelControler.RemovePlane(plane);
+	}
+	#endregion
 
 	#endregion
 

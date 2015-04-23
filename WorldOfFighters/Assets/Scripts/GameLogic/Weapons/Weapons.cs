@@ -1,15 +1,38 @@
-﻿namespace Assets.Scripts.GameLogic.Weapons
+﻿using System;
+using UnityEngine;
+
+namespace Assets.Scripts.GameLogic.Weapons
 {
 	public enum WeaponsType
 	{
-		Bullet,
-		Missile
+		BulletG4M1Betty,
+		BulletKi30Nagoya,
+		BulletJoyKikka,
+		BulletKi57,
 	}
 
 	public enum OwnerInfo
 	{
 		Player,
 		AI
+	}
+
+	[Serializable]
+	public class WeaponSimple
+	{
+		[SerializeField]
+		public WeaponsType Type;
+
+		[SerializeField]
+		public float Speed;
+		[SerializeField]
+		public float BlowUpTime;
+		[SerializeField]
+		public int Damage;
+		[SerializeField]
+		public float CooldownTimer;
+		[SerializeField]
+		public OwnerInfo Owner;
 	}
 
 	public class Weapons
@@ -64,7 +87,7 @@
 
 		public Weapons()
 		{
-			_weaponsType = WeaponsType.Bullet;
+			_weaponsType = WeaponsType.BulletG4M1Betty;
 			_speed = 0;
 			_cooldownTime = 0;
 			_timeToBlowUp = 0;
@@ -72,13 +95,15 @@
 			_ownerInfo = OwnerInfo.Player;
 		}
 
-		public Weapons(WeaponsType type, float speed, float cooldownTimer, float timeToBlowUp, int damage)
+		public Weapons(WeaponsType type, float speed, float cooldownTimer, float timeToBlowUp, int damage, OwnerInfo owner)
 		{
 			_weaponsType = type;
 			_speed = speed;
 			_cooldownTime = cooldownTimer;
 			_timeToBlowUp = timeToBlowUp;
 			_damage = damage;
+
+			_ownerInfo = owner;
 		}
 
 		public static Weapons Create()
@@ -86,9 +111,9 @@
 			return new Weapons();
 		}
 
-		public static Weapons Create(WeaponsType type, float speed, float cooldownTimer, float timeToBlowUp, int damage)
+		public static Weapons Create(WeaponsType type, float speed, float cooldownTimer, float timeToBlowUp, int damage, OwnerInfo owner)
 		{
-			return new Weapons(type, speed, cooldownTimer, timeToBlowUp, damage);
+			return new Weapons(type, speed, cooldownTimer, timeToBlowUp, damage, owner);
 		}
 
 		#endregion

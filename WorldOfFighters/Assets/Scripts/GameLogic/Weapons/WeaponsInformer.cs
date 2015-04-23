@@ -1,10 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.GameLogic.Game;
+using Assets.Scripts.GameLogic.Weapons;
 using UnityEngine;
 using System.Collections;
 
 public class WeaponsInformer : MonoBehaviour
 {
+
+	#region Constants
+
+	private const string BulletG4M1PrefabPath = "Prefabs/Weapons/BulletG4M1Betty";
+	private const string BulletJoyKikkaPrefabPath = "Prefabs/Weapons/BulletJoyKikka";
+	private const string BulletKi30NagoyaPrefabPath = "Prefabs/Weapons/BulletKi30Nagoya";
+	private const string BulletKi57PrefabPath = "Prefabs/Weapons/BulletKi57";
+
+	#endregion
 
 	#region Variables
 	[SerializeField]
@@ -63,15 +74,20 @@ public class WeaponsInformer : MonoBehaviour
 
 	#region MonoBehaviour Action
 
-	// Use this for initialization
-	void Start ()
+	private void Awake()
 	{
 		_shellParent = FindObjectOfType<BulletsHelper>();
 
 		if (_shellParent == null)
 		{
 			throw new MissingComponentException("WeaponsInformer.Start - can't find BulletsHelper component");
-		}
+		}	
+	}
+
+	// Use this for initialization
+	void Start ()
+	{
+	
 	}
 	
 	// Update is called once per frame
@@ -97,25 +113,45 @@ public class WeaponsInformer : MonoBehaviour
 			if (weaponsInfoPair.State == WeaponsState.Reload)
 				continue;
 
-			GameObject  shellOpject = (GameObject)Instantiate(weaponsInfoPair.Weapons.transform.gameObject, weaponsInfoPair.StartPosition.position,
-			                                                weaponsInfoPair.StartPosition.rotation);
-
-			if (shellOpject == null)
-			{
-				continue;
-			}
-
-			WeaponsBehaviour weaponsBehaviour = shellOpject.GetComponent<WeaponsBehaviour>();
+			WeaponsBehaviour weaponsBehaviour = ResourceController.GetBulletFromPool(GetWeaponPrefabPathByType(weaponsInfoPair.Weapons.Type), _shellParent.transform);
 
 			if (weaponsBehaviour != null)
 			{
-				weaponsBehaviour.Init(_shellParent.transform, weaponsInfoPair.StartPosition.position, weaponsInfoPair.StartPosition.rotation,
-				                      weaponsInfoPair.StartPosition.up);
+				Vector3 direction = weaponsInfoPair.Weapons.Owner == OwnerInfo.Player ? weaponsInfoPair.StartPosition.up : Vector3.up;
+
+				weaponsBehaviour.Init(_shellParent.transform, weaponsInfoPair.StartPosition.position, weaponsInfoPair.Weapons.transform.rotation,
+									  direction);
 			}
 
 			weaponsInfoPair.Fire();
 			
 		}
+	}
+
+	private string GetWeaponPrefabPathByType(WeaponsType type)
+	{
+		string path = BulletG4M1PrefabPath;
+
+		switch (type)
+		{
+			case WeaponsType.BulletG4M1Betty:
+				path = BulletG4M1PrefabPath;
+				break;
+
+			case WeaponsType.BulletJoyKikka:
+				path = BulletJoyKikkaPrefabPath;
+				break;
+
+			case WeaponsType.BulletKi30Nagoya:
+				path = BulletKi30NagoyaPrefabPath;
+				break;
+
+			case WeaponsType.BulletKi57:
+				path = BulletKi57PrefabPath;
+				break;
+		}
+
+		return path;
 	}
 
 	#endregion
